@@ -7,7 +7,7 @@
 
 #define MAX_TOKENS 100
 #define COMMANDLINE_BUFSIZE 1024
-#define DEBUG 1  // Set to 1 to turn on some debugging output, or 0 to turn off
+#define DEBUG 0  // Set to 1 to turn on some debugging output, or 0 to turn off
 
 /**
  * Parse the command line.
@@ -72,29 +72,49 @@ int main(void)
         fgets(commandline, sizeof commandline, stdin);
 
         // Exit the shell on End-Of-File (CRTL-D)
-        if (feof(stdin)) {
+        if (feof(stdin)) 
+        {
             break;
         }
 
         // Parse input into individual arguments
         parse_commandline(commandline, args, &args_count);
 
-        if (args_count == 0) {
+        if (args_count == 0) 
+        {
             // If the user entered no commands, do nothing
             continue;
         }
 
         // Exit the shell if args[0] is the built-in "exit" command
-        if (strcmp(args[0], "exit") == 0) {
+        if (strcmp(args[0], "exit") == 0)
+        {
             break;
+        }
+
+        pid_t pid = fork(); // Fork a child process to run the new command.
+        if (pid == -1)
+        {
+            printf("YOU FAILED TO FORK \n"); // print out an error
+            // exit(1); (DO I NEED THIS???)
+        }
+        else if (pid > 0) // otherwise run this
+        {
+            int status;
+            waitpid(pid, &status, 0);
+        }
+        else
+        {
+            execvp(args[0], &args[0]); // Exec the command in the child process.
         }
 
         #if DEBUG
 
         // Some debugging output
 
-        // Print out the parsed command line in args[]
-        for (int i = 0; args[i] != NULL; i++) {
+        //Print out the parsed command line in args[]
+        for (int i = 0; args[i] != NULL; i++) 
+        {
             printf("%d: '%s'\n", i, args[i]);
         }
 
