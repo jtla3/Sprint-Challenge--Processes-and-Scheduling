@@ -93,12 +93,12 @@ int main(void)
         {
             break;
         }
-
-        pid_t pid = fork(); // Fork a child process to run the new command.
+        // Fork a child process to run the new command.
+        pid_t pid = fork(); 
         if (pid == -1)
         {
             printf("YOU FAILED TO FORK \n"); // print out an error
-            // exit(1); (DO I NEED THIS???)
+            exit(1);
         }
         else if (pid > 0) // otherwise run this
         {
